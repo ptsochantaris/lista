@@ -7,8 +7,7 @@ _This is my linked list. There are many like it, but this one is mine, in Swift.
 I keep finding myself reaching for a linked list structure on various occasions and either have to roll my own or import some large (and usually brilliant) package of multiple algorithms and storage types. I just want a tiny and fast linked list with no dependencies, so I ended up writing this one, and since I ended up using it in various places, I've made it available here for others to use/copy/tweak/improve.
 
 ### Usage
-Lista is a generic-typed Swift `Sequence` implemented as a simple signle-linked list and conforming to `Codable` for serialising and deserialising. It has the expected performance characteristics. I find it most useful when implementing stacks and FIFO chains, as well as using it when an unknown (but generally large) number of items needs to be appended serially to a list.
-
+Lista is a generic-typed Swift `Sequence` implemented as a simple signle-linked list and conforming to `Codable` for serialising and deserialising. It has the expected performance characteristics. I find it most useful when implementing stacks and FIFO chains, as well as using it when an unknown (but generally large) number of items needs to be appended serially to a list. See the API section below for all the convenience methods provided.
 ```
     let list = Lista<Int>()
 
@@ -57,7 +56,6 @@ Lista is a generic-typed Swift `Sequence` implemented as a simple signle-linked 
 ```
 
 The methods below allow random access, but, as their name suggests, are slow. If you find that you use them a lot, a linked list may not be the right solution :)
-
 ```
     // Item at `index`
     func slowItem(at index: Int) -> Value?
@@ -73,13 +71,11 @@ The methods below allow random access, but, as their name suggests, are slow. If
 ```
 
 If the `Value` type is `Codable` then Lista will conditionally conform to that as well, so it can be serialised and deserialised easily.
-
 ```
     extension Lista: Codable where Value: Codable
 ```
 
 If the `Value` type is an object, a performance-specific method allows the item to be detected by internally using a reference comparison instead of the equality operator.
-
 ```
     func removeInstance(of item: Value) -> Bool
 ```
