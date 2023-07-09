@@ -1,5 +1,5 @@
 import XCTest
-@testable import lista
+@testable import Lista
 
 final class listaTests: XCTestCase {
     func testExample() throws {

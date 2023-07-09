@@ -51,7 +51,7 @@ public final class Lista<Value>: Sequence {
         tail = newNode
     }
 
-    public func append(contentsOf collection: List<Value>) {
+    public func append(contentsOf collection: Lista<Value>) {
         if collection.count == 0 {
             return
         }
@@ -143,7 +143,7 @@ public final class Lista<Value>: Sequence {
     }
 }
 
-extension List: Codable where Value: Codable {
+extension Lista: Codable where Value: Codable {
     public convenience init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
         self.init()
@@ -159,7 +159,7 @@ extension List: Codable where Value: Codable {
     }
 }
 
-public extension List where Value: AnyObject {
+public extension Lista where Value: AnyObject {
     @discardableResult
     func removeInstance(of item: Value) -> Bool {
         guard var prev = head else {
