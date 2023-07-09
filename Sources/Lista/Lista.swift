@@ -86,6 +86,111 @@ public final class Lista<Value>: Sequence {
     public var last: Value? {
         tail?.value
     }
+    
+    public func slowItem(at index: Int) -> Value? {
+        guard index >= 0, index < count else {
+            return nil
+        }
+        
+        var current: Node<Value>? = head
+        for _ in 0 ..< index {
+            current = current?.next
+        }
+        return current?.value
+    }
+    
+    public func slowInsert(_ value: Value, at index: Int) -> Bool {
+        guard index >= 0 else {
+            return false
+        }
+        
+        if index == 0 { // insert at head
+            head = Node(value, head)
+            if tail == nil {
+                tail = head
+            }
+            count += 1
+            return true
+        }
+
+        guard var prev = head else {
+            return false
+        }
+        
+        var current = head
+        var index = index
+        
+        while let c = current {
+            if index == 0 {
+                prev.next = Node(value, c)
+                count += 1
+                return true
+            } else {
+                index -= 1
+            }
+
+            prev = c
+            current = c.next
+        }
+        
+        if index == 0 { // insert at end
+            let new = Node(value, nil)
+            if let t = tail {
+                t.next = new
+                tail = new
+            } else {
+                tail = new
+            }
+            count += 1
+            return true
+        }
+
+        return false
+    }
+
+    public func slowDropLast() -> Value? {
+        let last = tail?.value
+        slowRemove(at: count - 1)
+        return last
+    }
+
+    @discardableResult
+    public func slowRemove(at index: Int) -> Value? {
+        guard var prev = head, index >= 0, count > 0 else {
+            return nil
+        }
+        
+        if index == 0 {
+            let value = prev.value
+            head = prev.next
+            count -= 1
+            return value
+        }
+
+        var current = head
+        var index = index
+        
+        while let c = current {
+            if index == 0 {
+                prev.next = c.next
+                count -= 1
+                if count == 0 {
+                    head = nil
+                    tail = nil
+                } else if tail === c {
+                    tail = prev
+                }
+                return c.value
+            } else {
+                index -= 1
+            }
+
+            prev = c
+            current = c.next
+        }
+
+        return nil
+    }
 
     @discardableResult
     public func remove(first removeCheck: (Value) -> Bool) -> Bool {
@@ -113,6 +218,32 @@ public final class Lista<Value>: Sequence {
         }
 
         return false
+    }
+
+    public func removeAll(where removeCheck: (Value) -> Bool) {
+        guard var prev = head else {
+            return
+        }
+
+        var current = head
+
+        while let c = current {
+            if removeCheck(c.value) {
+                prev.next = c.next
+                count -= 1
+                if count == 0 {
+                    head = nil
+                    tail = nil
+                    return
+                } else if tail === c {
+                    tail = prev
+                }
+                current = c.next
+            } else {
+                prev = c
+                current = c.next
+            }
+        }
     }
 
     public func removeAll() {
