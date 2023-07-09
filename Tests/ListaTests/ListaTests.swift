@@ -2,14 +2,25 @@ import XCTest
 @testable import Lista
 
 final class listaTests: XCTestCase {
-    func testInitAndAppend() {
+    func testInitAppendAndIterating() {
         let list = Lista(value: 0)
-        for i in stride(from: 1, to: 100, by: 1) {
+        let originalList = stride(from: 1, to: 100, by: 1)
+        for i in originalList {
             list.append(i)
         }
         XCTAssert(list.count == 100)
         XCTAssert(list.first == 0)
         XCTAssert(list.last == 99)
+        
+        let doubled = list.map { $0 * 2 }
+        XCTAssert(doubled.count == list.count)
+        for i in 0 ..< list.count {
+            guard let original = list.slowItem(at: i) else {
+                XCTFail()
+                return
+            }
+            XCTAssert(doubled[i] == original * 2)
+        }
     }
     
     func testInitAndRemoval() {

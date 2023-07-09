@@ -252,7 +252,7 @@ public final class Lista<Value>: Sequence {
         count = 0
     }
 
-    public final class ListIterator: IteratorProtocol {
+    public final class ListaIterator: IteratorProtocol {
         private var current: Node<Value>?
 
         fileprivate init(_ current: Node<Value>?) {
@@ -269,8 +269,8 @@ public final class Lista<Value>: Sequence {
         }
     }
 
-    public func makeIterator() -> ListIterator {
-        ListIterator(head)
+    public func makeIterator() -> ListaIterator {
+        ListaIterator(head)
     }
 }
 
