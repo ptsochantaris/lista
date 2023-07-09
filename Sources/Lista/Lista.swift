@@ -66,6 +66,12 @@ public final class Lista<Value>: Sequence {
         tail = collection.tail
     }
 
+    public func append<S: Sequence>(from sequence: S) where S.Iterator.Element == Value {
+        for item in sequence {
+            append(item)
+        }
+    }
+
     public func pop() -> Value? {
         if let top = head {
             count -= 1

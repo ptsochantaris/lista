@@ -12,6 +12,20 @@ final class listaTests: XCTestCase {
         XCTAssert(list.first == 0)
         XCTAssert(list.last == 99)
         
+        let extra = Lista<Int>()
+        extra.append(100)
+        extra.append(101)
+        extra.append(102)
+        list.append(contentsOf: extra)
+        XCTAssert(list.count == 103)
+        XCTAssert(list.first == 0)
+        XCTAssert(list.last == 102)
+        
+        list.append(from: [103, 104, 105])
+        XCTAssert(list.count == 106)
+        XCTAssert(list.first == 0)
+        XCTAssert(list.last == 105)
+
         let doubled = list.map { $0 * 2 }
         XCTAssert(doubled.count == list.count)
         for i in 0 ..< list.count {
