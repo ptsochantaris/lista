@@ -10,7 +10,7 @@ I keep finding myself reaching for a linked list structure on various occasions 
 
 I just want a tiny and fast linked list with no dependencies, so I ended up writing this one, and since I ended up using it in various places, I've made it available here for others to use/copy/tweak/improve.
 
-Lista is a generic-typed Swift `Sequence` implemented as a simple signle-linked list and conforming to `Codable` for serialising and deserialising. It has the expected performance characteristics. I find it most useful when implementing stacks and FIFO chains, as well as using it when an unknown (but generally large) number of items needs to be appended serially to a list.
+Lista is a generic-typed Swift `Collection` implemented as a simple signle-linked list and conforming to `Codable` for serialising and deserialising. It has the expected performance characteristics. I find it most useful when implementing stacks and FIFO chains, as well as using it when an unknown (but generally large) number of items needs to be appended serially to a list.
 
 ## Topics
 
@@ -21,7 +21,6 @@ Lista is a generic-typed Swift `Sequence` implemented as a simple signle-linked 
 - ``Lista/Lista/count``
 - ``Lista/Lista/first``
 - ``Lista/Lista/last``
-
 
 ### Operations At The Start
 - ``Lista/Lista/push(_:)``
@@ -43,4 +42,3 @@ Lista is a generic-typed Swift `Sequence` implemented as a simple signle-linked 
 - ``Lista/Lista/slowRemove(at:)``
 - ``Lista/Lista/slowInsert(_:at:)``
 - ``Lista/Lista/slowDropLast()``
-

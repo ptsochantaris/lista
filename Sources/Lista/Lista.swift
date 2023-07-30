@@ -1,7 +1,7 @@
 import Foundation
 
 // An instance of a list
-public final class Lista<Value>: Sequence {
+public final class Lista<Value> {
     fileprivate final class Node<T> {
         fileprivate let value: T
         fileprivate var next: Node<T>?
@@ -412,30 +412,6 @@ public final class Lista<Value>: Sequence {
         tail = nil
         count = 0
     }
-
-    /// The iterator helper class for ``Lista``
-    public final class ListaIterator: IteratorProtocol {
-        private var current: Node<Value>?
-
-        fileprivate init(_ current: Node<Value>?) {
-            self.current = current
-        }
-
-        /// The next value in the list
-        public func next() -> Value? {
-            if let res = current {
-                current = res.next
-                return res.value
-            } else {
-                return nil
-            }
-        }
-    }
-
-    // Create an iterator for sequentially traversing this list
-    public func makeIterator() -> ListaIterator {
-        ListaIterator(head)
-    }
 }
 
 extension Lista: Codable where Value: Codable {
@@ -505,3 +481,36 @@ public extension Lista where Value: AnyObject {
     }
 }
 
+extension Lista: Collection {
+    public func index(after i: Int) -> Int { i + 1 }
+    
+    public subscript(position: Int) -> Value { slowItem(at: position)! }
+    
+    public var startIndex: Int { 0 }
+    
+    public var endIndex: Int { count }
+    
+    /// The iterator helper class for ``Lista``
+    public final class ListaIterator: IteratorProtocol {
+        private var current: Node<Value>?
+
+        fileprivate init(_ current: Node<Value>?) {
+            self.current = current
+        }
+
+        /// The next value in the list
+        public func next() -> Value? {
+            if let res = current {
+                current = res.next
+                return res.value
+            } else {
+                return nil
+            }
+        }
+    }
+
+    /// Create an iterator for sequentially traversing this list
+    public func makeIterator() -> ListaIterator {
+        ListaIterator(head)
+    }
+}
