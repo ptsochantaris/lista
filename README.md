@@ -80,7 +80,11 @@ If the `Value` type is an object, a performance-specific method allows the item 
     func removeInstance(of item: Value) -> Bool
 ```
 
-For public projects, I've used Lista in [Trailer](https://github.com/ptsochantaris/trailer), [Trailer-CLI](https://github.com/ptsochantaris/trailer-cli) and [trailer-ql](https://github.com/ptsochantaris/trailer-cli)
+For public projects, I've used Lista in:
+- [Trailer](https://github.com/ptsochantaris/trailer)
+- [Trailer-CLI](https://github.com/ptsochantaris/trailer-cli)
+- [trailer-ql](https://github.com/ptsochantaris/trailer-cli)
+- [Gladys](https://github.com/ptsochantaris/gladys)
 
 ### License
 Copyright (c) 2023 Paul Tsochantaris. Licensed under the MIT License, see LICENSE for details.
