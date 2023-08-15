@@ -6,11 +6,20 @@ _This is my linked list. There are many like it, but this one is mine, in Swift.
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fptsochantaris%2Flista%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/ptsochantaris/lista) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fptsochantaris%2Flista%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/ptsochantaris/lista)
 
-I keep finding myself reaching for a linked list structure on various occasions and either have to roll my own or import some large (and usually brilliant) package of multiple algorithms and storage types. I just want a tiny and fast linked list with no dependencies, so I ended up writing this one, and since I ended up using it in various places, I've made it available here for others to use/copy/tweak/improve.
+Currently used in
+- [Trailer](https://github.com/ptsochantaris/trailer)
+- [Trailer-CLI](https://github.com/ptsochantaris/trailer-cli)
+- [trailer-ql](https://github.com/ptsochantaris/trailer-cli)
+- [Gladys](https://github.com/ptsochantaris/gladys)
 
 Detailed docs [can be found here](https://swiftpackageindex.com/ptsochantaris/key-vine/documentation)
 
-### Usage
+##Overview
+
+I keep finding myself reaching for a linked list structure on various occasions and either have to roll my own or import some large (and usually brilliant) package of multiple algorithms and storage types. I just want a tiny and fast linked list with no dependencies, so I ended up writing this one, and since I ended up using it in various places, I've made it available here for others to use/copy/tweak/improve.
+
+
+## Usage
 Lista is a generic-typed Swift `Collection` implemented as a simple signle-linked list and conforming to `Codable` for serialising and deserialising. It has the expected performance characteristics. I find it most useful when implementing stacks and FIFO chains, as well as using it when an unknown (but generally large) number of items needs to be appended serially to a list. See the API section below for all the convenience methods provided.
 ```
 let list = Lista<Int>()
@@ -32,7 +41,7 @@ let doubled = list.map { $0 * 2 }
 print(doubled) // 0,2,4,6,8
 ```
 
-### API
+## API
 ```
 // Create, count items, get first or last items, if they exist
 init(value: Value? = nil)
@@ -84,11 +93,5 @@ If the `Value` type is an object, a performance-specific method allows the item 
 func removeInstance(of item: Value) -> Bool
 ```
 
-For public projects, I've used Lista in:
-- [Trailer](https://github.com/ptsochantaris/trailer)
-- [Trailer-CLI](https://github.com/ptsochantaris/trailer-cli)
-- [trailer-ql](https://github.com/ptsochantaris/trailer-cli)
-- [Gladys](https://github.com/ptsochantaris/gladys)
-
-### License
+## License
 Copyright (c) 2023 Paul Tsochantaris. Licensed under the MIT License, see LICENSE for details.
