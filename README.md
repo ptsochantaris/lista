@@ -1,3 +1,5 @@
+<img src="https://ptsochantaris.github.io/trailer/ListaLogo.webp" alt="Logo" width=256 style="float: right; padding: 20pt">
+
 # Lista
 
 _This is my linked list. There are many like it, but this one is mine, in Swift._
