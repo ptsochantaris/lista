@@ -1,14 +1,12 @@
-Lista
-=====
+# Lista
 
 _This is my linked list. There are many like it, but this one is mine, in Swift._
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fptsochantaris%2Flista%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/ptsochantaris/lista) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fptsochantaris%2Flista%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/ptsochantaris/lista)
 
-### About
 I keep finding myself reaching for a linked list structure on various occasions and either have to roll my own or import some large (and usually brilliant) package of multiple algorithms and storage types. I just want a tiny and fast linked list with no dependencies, so I ended up writing this one, and since I ended up using it in various places, I've made it available here for others to use/copy/tweak/improve.
 
-Full docs [can be found here](https://swiftpackageindex.com/ptsochantaris/key-vine/documentation)
+Detailed docs [can be found here](https://swiftpackageindex.com/ptsochantaris/key-vine/documentation)
 
 ### Usage
 Lista is a generic-typed Swift `Collection` implemented as a simple signle-linked list and conforming to `Codable` for serialising and deserialising. It has the expected performance characteristics. I find it most useful when implementing stacks and FIFO chains, as well as using it when an unknown (but generally large) number of items needs to be appended serially to a list. See the API section below for all the convenience methods provided.
