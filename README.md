@@ -1,4 +1,4 @@
-<img src="https://ptsochantaris.github.io/trailer/ListaLogo.webp" alt="Logo" width=256>
+<img src="https://ptsochantaris.github.io/trailer/ListaLogo.webp" alt="Logo" width=256 align="right">
 
 # Lista
 
