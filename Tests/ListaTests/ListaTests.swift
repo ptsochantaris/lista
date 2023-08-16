@@ -1,5 +1,5 @@
-import XCTest
 @testable import Lista
+import XCTest
 
 final class listaTests: XCTestCase {
     func testInitAppendAndIterating() {
@@ -11,7 +11,7 @@ final class listaTests: XCTestCase {
         XCTAssert(list.count == 100)
         XCTAssert(list.first == 0)
         XCTAssert(list.last == 99)
-        
+
         let extra = Lista<Int>()
         extra.append(100)
         extra.append(101)
@@ -20,7 +20,7 @@ final class listaTests: XCTestCase {
         XCTAssert(list.count == 103)
         XCTAssert(list.first == 0)
         XCTAssert(list.last == 102)
-        
+
         list.append(from: [103, 104, 105])
         XCTAssert(list.count == 106)
         XCTAssert(list.first == 0)
@@ -36,7 +36,7 @@ final class listaTests: XCTestCase {
             XCTAssert(doubled[i] == original * 2)
         }
     }
-    
+
     func testInitAndRemoval() {
         let list = Lista<Int>()
         for i in stride(from: 0, to: 200, by: 1) {
@@ -76,7 +76,7 @@ final class listaTests: XCTestCase {
         XCTAssert(!list.contains(98))
         XCTAssert(!list.contains(52))
         XCTAssert(!list.contains(230))
-        
+
         XCTAssert(list.slowRemove(at: 3) == 4)
         XCTAssert(!list.contains(4))
         XCTAssert(list.count == 184)
@@ -87,23 +87,23 @@ final class listaTests: XCTestCase {
 
         XCTAssert(list.slowRemove(at: -1) == nil)
         XCTAssert(list.first == 0)
-        XCTAssert(list.slowRemove(at: 0)==0)
+        XCTAssert(list.slowRemove(at: 0) == 0)
         XCTAssert(list.first == 1)
-        XCTAssert(list.slowRemove(at: 0)==1)
+        XCTAssert(list.slowRemove(at: 0) == 1)
         XCTAssert(list.first == 2)
-        XCTAssert(list.slowRemove(at: 0)==2)
+        XCTAssert(list.slowRemove(at: 0) == 2)
         XCTAssert(list.count == 180)
         XCTAssert(list.slowRemove(at: 123) != nil)
         XCTAssert(list.slowRemove(at: 687) == nil)
         XCTAssert(list.count == 179)
-        
+
         XCTAssert(list.last == 196)
         list.slowRemove(at: 139)
         XCTAssert(list.last == 196)
         XCTAssert(list.slowDropLast() == 196)
         XCTAssert(list.last == 195)
         XCTAssert(list.count == 177)
-        
+
         list.removeAll()
         XCTAssert(list.count == 0)
         XCTAssert(list.first == nil)
@@ -188,7 +188,7 @@ final class listaTests: XCTestCase {
         XCTAssert(list.count == 3)
         XCTAssert(list.first == "h")
         XCTAssert(list.last == "j")
-        
+
         XCTAssert(list.slowInsert("k", at: -1) == false)
         XCTAssert(list.count == 3)
         XCTAssert(list.first == "h")
@@ -198,13 +198,13 @@ final class listaTests: XCTestCase {
         XCTAssert(list.count == 3)
         XCTAssert(list.first == "h")
         XCTAssert(list.last == "j")
-        
+
         XCTAssert(list.slowItem(at: -1) == nil)
         XCTAssert(list.slowItem(at: 0) == "h")
         XCTAssert(list.slowItem(at: 1) == "f")
         XCTAssert(list.slowItem(at: 2) == "j")
         XCTAssert(list.slowItem(at: 3) == nil)
-        
+
         XCTAssert(list.filter { $0 != "f" } == ["h", "j"])
     }
 }

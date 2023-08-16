@@ -17,7 +17,7 @@ public final class Lista<Value> {
 
     /// The number of items currently in this list
     public var count: Int
-    
+
     /// Create a new list
     /// - Parameter value: An optional item to start off the list with
     ///
@@ -39,7 +39,7 @@ public final class Lista<Value> {
             count = 0
         }
     }
-    
+
     /// Add an item to the start of the list
     /// - Parameter value: The item to add
     ///
@@ -57,7 +57,7 @@ public final class Lista<Value> {
         }
         head = newNode
     }
-    
+
     /// Remove and return (pop!) the item at the start of this list
     /// - Returns: The item that used to be the first item on the list, or `nil` if empty
     ///
@@ -80,7 +80,7 @@ public final class Lista<Value> {
             return nil
         }
     }
-    
+
     /// Add an item to the end of the list
     /// - Parameter value: The item to add
     ///
@@ -100,7 +100,7 @@ public final class Lista<Value> {
         }
         tail = newNode
     }
-    
+
     /// Link another list to the end of this list
     /// - Parameter collection: The collection whose head will link to the tail of this list. *Note* that once this is performed, the added list is no longer usable and its reference should be discarded
     ///
@@ -128,7 +128,7 @@ public final class Lista<Value> {
         }
         tail = collection.tail
     }
-    
+
     /// Add all the items of the sequence to the end of this list
     /// - Parameter sequence: The sequence from which to read the items
     ///
@@ -143,7 +143,7 @@ public final class Lista<Value> {
             append(item)
         }
     }
-    
+
     /// The  item at the start the list, if the list is not empty
     ///
     /// ```
@@ -167,7 +167,7 @@ public final class Lista<Value> {
     public var last: Value? {
         tail?.value
     }
-        
+
     /// Retrieve an item at a specific index on the list
     /// - Parameter index: The zero-based index of the item in the list that we want to retrieve
     /// - Returns: The item at the specified index, or `nil` if the index is out of range
@@ -183,14 +183,14 @@ public final class Lista<Value> {
         guard index >= 0, index < count else {
             return nil
         }
-        
+
         var current: Node<Value>? = head
         for _ in 0 ..< index {
             current = current?.next
         }
         return current?.value
     }
-    
+
     /// Insert an item into the specific index on the list
     /// - Parameters:
     ///   - value: The value to insert
@@ -208,7 +208,7 @@ public final class Lista<Value> {
         guard index >= 0 else {
             return false
         }
-        
+
         if index == 0 { // insert at head
             head = Node(value, head)
             if tail == nil {
@@ -221,10 +221,10 @@ public final class Lista<Value> {
         guard var prev = head else {
             return false
         }
-        
+
         var current = head
         var index = index
-        
+
         while let c = current {
             if index == 0 {
                 prev.next = Node(value, c)
@@ -237,7 +237,7 @@ public final class Lista<Value> {
             prev = c
             current = c.next
         }
-        
+
         if index == 0 { // insert at end
             let new = Node(value, nil)
             if let t = tail {
@@ -252,7 +252,7 @@ public final class Lista<Value> {
 
         return false
     }
-    
+
     /// Remove the last element from the list
     /// - Returns: The item which used to be the last on the list, or `nil` if the list was empty
     ///
@@ -286,7 +286,7 @@ public final class Lista<Value> {
         guard var prev = head, index >= 0, count > 0 else {
             return nil
         }
-        
+
         if index == 0 {
             let value = prev.value
             head = prev.next
@@ -296,7 +296,7 @@ public final class Lista<Value> {
 
         var current = head
         var index = index
-        
+
         while let c = current {
             if index == 0 {
                 prev.next = c.next
@@ -359,7 +359,7 @@ public final class Lista<Value> {
 
         return false
     }
-    
+
     /// Remove all items that meet a certain programmatic criterion
     /// - Parameter removeCheck: A block which takes an item and returns `true` or `false` depending on whether it has found a relevant item
     /// - Returns: `true` or `false` indicating whether any items were found and removed
@@ -483,13 +483,13 @@ public extension Lista where Value: AnyObject {
 
 extension Lista: Collection {
     public func index(after i: Int) -> Int { i + 1 }
-    
+
     public subscript(position: Int) -> Value { slowItem(at: position)! }
-    
+
     public var startIndex: Int { 0 }
-    
+
     public var endIndex: Int { count }
-    
+
     /// The iterator helper class for ``Lista``
     public final class ListaIterator: IteratorProtocol {
         private var current: Node<Value>?
