@@ -20,7 +20,7 @@ I keep finding myself reaching for a linked list structure on various occasions 
 
 
 ## Usage
-Lista is a generic-typed Swift `Collection` implemented as a simple signle-linked list and conforming to `Codable` for serialising and deserialising. It has the expected performance characteristics. I find it most useful when implementing stacks and FIFO chains, as well as using it when an unknown (but generally large) number of items needs to be appended serially to a list. See the API section below for all the convenience methods provided.
+Lista is a generic-typed Swift `Collection` implemented as a simple signle-linked list and conforming to `Codable` for serialising and deserialising. It is also `Sendable` and thread-safe. It has the expected performance characteristics. I find it most useful when implementing stacks and FIFO chains, as well as using it when an unknown (but generally large) number of items needs to be appended serially to a list. See the API section below for all the convenience methods provided.
 ```
 let list = Lista<Int>()
 

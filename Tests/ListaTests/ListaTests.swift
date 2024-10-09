@@ -2,6 +2,27 @@
 import XCTest
 
 final class listaTests: XCTestCase {
+    func testSendability() async {
+        let list1 = Lista<Int>()
+        let list2 = Lista<Int>()
+        let list3 = Lista<Int>()
+        await withTaskGroup(of: Void.self) { group in
+            for i in 0 ..< 10000 {
+                group.addTask {
+                    list1.append(i)
+                    try? await Task.sleep(nanoseconds: UInt64.random(in: 1 ... 10) * NSEC_PER_MSEC)
+                    list2.append(i)
+                    try? await Task.sleep(nanoseconds: UInt64.random(in: 1 ... 10) * NSEC_PER_MSEC)
+                    list3.append(i)
+                    try? await Task.sleep(nanoseconds: UInt64.random(in: 1 ... 10) * NSEC_PER_MSEC)
+                }
+            }
+        }
+        XCTAssertEqual(list1.count, 10000)
+        XCTAssertEqual(list2.count, 10000)
+        XCTAssertEqual(list3.count, 10000)
+    }
+
     func testInitAppendAndIterating() {
         let list = Lista(value: 0)
         let originalList = stride(from: 1, to: 100, by: 1)
