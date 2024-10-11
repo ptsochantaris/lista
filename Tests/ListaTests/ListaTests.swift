@@ -228,4 +228,13 @@ final class listaTests: XCTestCase {
 
         XCTAssert(list.filter { $0 != "f" } == ["h", "j"])
     }
+
+    func testAppendPerformance() {
+        measure {
+            let list = Lista<Int>()
+            for i in 0 ..< 100_000 {
+                list.append(i)
+            }
+        }
+    }
 }

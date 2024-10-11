@@ -12,15 +12,26 @@ private final class Node<T> {
 
 // An instance of a list
 public final class Lista<Value>: Sendable {
-    private let queue = DispatchQueue(label: "build.bru.lista.queue.\(UUID().uuidString)")
-
     private nonisolated(unsafe) var _head: Node<Value>?
     private nonisolated(unsafe) var _tail: Node<Value>?
     private nonisolated(unsafe) var _count: Int
+    private nonisolated(unsafe) var _lock = os_unfair_lock_s()
+
+    @inline(__always)
+    private func lock() {
+        os_unfair_lock_lock(&_lock)
+    }
+
+    @inline(__always)
+    private func unlock() {
+        os_unfair_lock_unlock(&_lock)
+    }
 
     /// The number of items currently in this list
     public var count: Int {
-        queue.sync { _count }
+        lock()
+        defer { unlock() }
+        return _count
     }
 
     /// Create a new list
@@ -54,15 +65,16 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a fast, constant-time, operation.
     public func push(_ value: Value) {
-        queue.sync {
-            _count += 1
+        lock()
+        defer { unlock() }
 
-            let newNode = Node(value, _head)
-            if _tail == nil {
-                _tail = newNode
-            }
-            _head = newNode
+        _count += 1
+
+        let newNode = Node(value, _head)
+        if _tail == nil {
+            _tail = newNode
         }
+        _head = newNode
     }
 
     /// Remove and return (pop!) the item at the start of this list
@@ -76,17 +88,18 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a fast, constant-time, operation.
     public func pop() -> Value? {
-        queue.sync {
-            if let top = _head {
-                _count -= 1
-                _head = top.next
-                if _count == 0 {
-                    _tail = nil
-                }
-                return top.value
-            } else {
-                return nil
+        lock()
+        defer { unlock() }
+
+        if let top = _head {
+            _count -= 1
+            _head = top.next
+            if _count == 0 {
+                _tail = nil
             }
+            return top.value
+        } else {
+            return nil
         }
     }
 
@@ -99,9 +112,10 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a fast, constant-time, operation.
     public func append(_ value: Value) {
-        queue.sync {
-            _append(value)
-        }
+        lock()
+        defer { unlock() }
+
+        _append(value)
     }
 
     private func _append(_ value: Value) {
@@ -130,9 +144,10 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a fast, constant-time, operation.
     public func append(contentsOf collection: Lista<Value>) {
-        queue.sync {
-            _append(contentsOf: collection)
-        }
+        lock()
+        defer { unlock() }
+
+        _append(contentsOf: collection)
     }
 
     private func _append(contentsOf collection: Lista<Value>) {
@@ -160,10 +175,11 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a fast, constant-time, operation.
     public func append<S: Sequence>(from sequence: S) where S.Iterator.Element == Value {
-        queue.sync {
-            for item in sequence {
-                _append(item)
-            }
+        lock()
+        defer { unlock() }
+
+        for item in sequence {
+            _append(item)
         }
     }
 
@@ -176,9 +192,9 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a fast, constant-time, operation.
     public var first: Value? {
-        queue.sync {
-            _head?.value
-        }
+        lock()
+        defer { unlock() }
+        return _head?.value
     }
 
     /// The item at the end of the list, if the list is not empty
@@ -190,9 +206,9 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a fast, constant-time, operation.
     public var last: Value? {
-        queue.sync {
-            _tail?.value
-        }
+        lock()
+        defer { unlock() }
+        return _tail?.value
     }
 
     /// Retrieve an item at a specific index on the list
@@ -207,17 +223,18 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a slow, linear-time, operation. Typically a scenario that requires regular random accesses is not well suited for a linked-list. If you find that you are using this method extensively then using an array, or similar random access collection, may make more sense.
     public func slowItem(at index: Int) -> Value? {
-        queue.sync {
-            guard index >= 0, index < _count else {
-                return nil
-            }
+        lock()
+        defer { unlock() }
 
-            var current: Node<Value>? = _head
-            for _ in 0 ..< index {
-                current = current?.next
-            }
-            return current?.value
+        guard index >= 0, index < _count else {
+            return nil
         }
+
+        var current: Node<Value>? = _head
+        for _ in 0 ..< index {
+            current = current?.next
+        }
+        return current?.value
     }
 
     /// Insert an item into the specific index on the list
@@ -234,54 +251,55 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a slow, linear-time, operation. Typically a scenario that requires regular random inserts is not well suited for a linked-list. If you find that you are using this method extensively then using an array, or similar random access collection, may make more sense.
     public func slowInsert(_ value: Value, at index: Int) -> Bool {
-        queue.sync {
-            guard index >= 0 else {
-                return false
-            }
+        lock()
+        defer { unlock() }
 
-            if index == 0 { // insert at head
-                _head = Node(value, _head)
-                if _tail == nil {
-                    _tail = _head
-                }
-                _count += 1
-                return true
-            }
-
-            guard var prev = _head else {
-                return false
-            }
-
-            var current = _head
-            var index = index
-
-            while let c = current {
-                if index == 0 {
-                    prev.next = Node(value, c)
-                    _count += 1
-                    return true
-                } else {
-                    index -= 1
-                }
-
-                prev = c
-                current = c.next
-            }
-
-            if index == 0 { // insert at end
-                let new = Node(value, nil)
-                if let t = _tail {
-                    t.next = new
-                    _tail = new
-                } else {
-                    _tail = new
-                }
-                _count += 1
-                return true
-            }
-
+        guard index >= 0 else {
             return false
         }
+
+        if index == 0 { // insert at head
+            _head = Node(value, _head)
+            if _tail == nil {
+                _tail = _head
+            }
+            _count += 1
+            return true
+        }
+
+        guard var prev = _head else {
+            return false
+        }
+
+        var current = _head
+        var index = index
+
+        while let c = current {
+            if index == 0 {
+                prev.next = Node(value, c)
+                _count += 1
+                return true
+            } else {
+                index -= 1
+            }
+
+            prev = c
+            current = c.next
+        }
+
+        if index == 0 { // insert at end
+            let new = Node(value, nil)
+            if let t = _tail {
+                t.next = new
+                _tail = new
+            } else {
+                _tail = new
+            }
+            _count += 1
+            return true
+        }
+
+        return false
     }
 
     /// Remove the last element from the list
@@ -295,11 +313,12 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a slow, linear-time, operation. Typically a scenario that requires regular additions and drops from the edge of a list should use ``push(_:)`` and ``pop()`` instead, which modify the start of the list in constant-time, and act like a stack.
     public func slowDropLast() -> Value? {
-        queue.sync {
-            let last = _tail?.value
-            _slowRemove(at: _count - 1)
-            return last
-        }
+        lock()
+        defer { unlock() }
+
+        let last = _tail?.value
+        _slowRemove(at: _count - 1)
+        return last
     }
 
     /// Remove an item at a specific index, if it exists
@@ -316,9 +335,9 @@ public final class Lista<Value>: Sendable {
     /// This is a slow, linear-time, operation. Typically a scenario that requires regular random removals is not well suited for a linked-list. If you find that you are using this method extensively then using an array, or similar random access collection, may make more sense.
     @discardableResult
     public func slowRemove(at index: Int) -> Value? {
-        queue.sync {
-            _slowRemove(at: index)
-        }
+        lock()
+        defer { unlock() }
+        return _slowRemove(at: index)
     }
 
     @discardableResult
@@ -374,32 +393,33 @@ public final class Lista<Value>: Sendable {
     /// This is a linear-time operation, with very similar performance to the equivalent array or collection methods.
     @discardableResult
     public func remove(first removeCheck: (Value) -> Bool) -> Bool {
-        queue.sync {
-            guard var prev = _head else {
-                return false
-            }
+        lock()
+        defer { unlock() }
 
-            var current = _head
-
-            while let c = current {
-                if removeCheck(c.value) {
-                    prev.next = c.next
-                    _count -= 1
-                    if _count == 0 {
-                        _head = nil
-                        _tail = nil
-                    } else if _tail === c {
-                        _tail = prev
-                    }
-                    return true
-                }
-
-                prev = c
-                current = c.next
-            }
-
+        guard var prev = _head else {
             return false
         }
+
+        var current = _head
+
+        while let c = current {
+            if removeCheck(c.value) {
+                prev.next = c.next
+                _count -= 1
+                if _count == 0 {
+                    _head = nil
+                    _tail = nil
+                } else if _tail === c {
+                    _tail = prev
+                }
+                return true
+            }
+
+            prev = c
+            current = c.next
+        }
+
+        return false
     }
 
     /// Remove all items that meet a certain programmatic criterion
@@ -416,29 +436,30 @@ public final class Lista<Value>: Sendable {
     ///
     /// This is a linear-time operation, with very similar performance to the equivalent array or collection methods.
     public func removeAll(where removeCheck: (Value) -> Bool) {
-        queue.sync {
-            guard var prev = _head else {
-                return
-            }
+        lock()
+        defer { unlock() }
 
-            var current = _head
+        guard var prev = _head else {
+            return
+        }
 
-            while let c = current {
-                if removeCheck(c.value) {
-                    prev.next = c.next
-                    _count -= 1
-                    if _count == 0 {
-                        _head = nil
-                        _tail = nil
-                        return
-                    } else if _tail === c {
-                        _tail = prev
-                    }
-                    current = c.next
-                } else {
-                    prev = c
-                    current = c.next
+        var current = _head
+
+        while let c = current {
+            if removeCheck(c.value) {
+                prev.next = c.next
+                _count -= 1
+                if _count == 0 {
+                    _head = nil
+                    _tail = nil
+                    return
+                } else if _tail === c {
+                    _tail = prev
                 }
+                current = c.next
+            } else {
+                prev = c
+                current = c.next
             }
         }
     }
@@ -452,11 +473,11 @@ public final class Lista<Value>: Sendable {
     /// ```
     /// This is a fast, constant-time, operation.
     public func removeAll() {
-        queue.sync {
-            _head = nil
-            _tail = nil
-            _count = 0
-        }
+        lock()
+        defer { unlock() }
+        _head = nil
+        _tail = nil
+        _count = 0
     }
 }
 
@@ -500,32 +521,32 @@ public extension Lista where Value: AnyObject {
     /// This is a linear-time operation, with very similar performance to the equivalent array or collection methods
     @discardableResult
     func removeInstance(of item: Value) -> Bool {
-        queue.sync {
-            guard var prev = _head else {
-                return false
-            }
-
-            var current = _head
-
-            while let c = current {
-                if c.value === item {
-                    prev.next = c.next
-                    _count -= 1
-                    if _count == 0 {
-                        _head = nil
-                        _tail = nil
-                    } else if _tail === c {
-                        _tail = prev
-                    }
-                    return true
-                }
-
-                prev = c
-                current = c.next
-            }
-
+        lock()
+        defer { unlock() }
+        guard var prev = _head else {
             return false
         }
+
+        var current = _head
+
+        while let c = current {
+            if c.value === item {
+                prev.next = c.next
+                _count -= 1
+                if _count == 0 {
+                    _head = nil
+                    _tail = nil
+                } else if _tail === c {
+                    _tail = prev
+                }
+                return true
+            }
+
+            prev = c
+            current = c.next
+        }
+
+        return false
     }
 }
 
